@@ -2,13 +2,17 @@ const express = require('express');
 const axios = require('axios');
 require('dotenv').config();
 
+const path = require('path');
+
 const app = express();
 
 app.use(express.json());
 
-// Homepage
+// Frontend files
+app.use(express.static(__dirname));
+
 app.get('/', (req, res) => {
-    res.send('Image Animator Server is running!');
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Animation API
@@ -40,15 +44,10 @@ app.post('/api/animate', async (req, res) => {
             }
         );
 
-        res.status(200).json(response.data);
+        res.json(response.data);
 
     } catch (error) {
-        console.error(
-            'Animation Error:',
-            error.response
-                ? error.response.data
-                : error.message
-        );
+        console.error(error.response?.data || error.message);
 
         res.status(500).json({
             error: 'Failed to animate'
