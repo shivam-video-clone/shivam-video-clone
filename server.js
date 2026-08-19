@@ -1,31 +1,35 @@
 const express = require('express');
-const multer = require('multer');
 const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
-const upload = multer({ dest: 'uploads/' });
-
 app.use(express.json());
 
-// API Endpoints
-app.post('/api/animate', upload.single('image'), async (req, res) => {
+// अपना API Token यहाँ पेस्ट करें
+const REPLICATE_API_TOKEN = 'export REPLICATE_API_TOKEN=<paste-your-token-here>'; 
+
+app.post('/api/animate', async (req, res) => {
     try {
-        const { prompt, ratio, duration } = req.body;
+        const { image_url, prompt } = req.body;
         
-        // यहा हम REPLICATE API को कॉल करेंगे (अगले स्टेप में)
-        // अभी हम सिर्फ एक सफल रेस्पॉन्स का सिम्युलेशन भेज रहे हैं
-        
-        res.status(200).json({
-            status: 'success',
-            message: 'Animation request received',
-            videoUrl: 'https://example.com/video-output.mp4'
+        // Replicate API कॉल - इमेज टू वीडियो
+        const response = await axios.post('https://api.replicate.com/v1/models/bytedance/seedance-2-5-internal/predictions', {
+            input: {
+                image: image_url,
+                prompt: prompt
+            }
+        }, {
+            headers: {
+                'Authorization': `Token ${REPLICATE_API_TOKEN}`,
+                'Content-Type': 'application/json'
+            }
         });
+
+        res.status(200).json(response.data);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to process animation' });
+        console.error("Animation Error:", error.response ? error.response.data : error.message);
+        res.status(500).json({ error: 'Failed to animate' });
     }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`PixFlow Backend running on port ${PORT}`));
-
+app.listen(3000, () => console.log('PixFlow Server running on port 3000'));
