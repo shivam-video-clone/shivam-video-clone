@@ -5,13 +5,14 @@ require('dotenv').config();
 const app = express();
 app.use(express.json());
 
-// अपना API Token यहाँ पेस्ट करें
-const REPLICATE_API_TOKEN = r8_FVEVR67FkzdSTxr1JMjBLYzpRuuUiLs1LdRHx
+// यहाँ हमने टोकन को कोड से हटाकर सुरक्षित (Environment Variable) बना दिया है
+const REPLICATE_API_TOKEN = process.env.REPLICATE_API_TOKEN;
+
 app.post('/api/animate', async (req, res) => {
     try {
         const { image_url, prompt } = req.body;
         
-        // Replicate API कॉल - इमेज टू वीडियो
+        // Replicate API कॉल
         const response = await axios.post('https://api.replicate.com/v1/models/bytedance/seedance-2-5-internal/predictions', {
             input: {
                 image: image_url,
@@ -31,4 +32,5 @@ app.post('/api/animate', async (req, res) => {
     }
 });
 
-app.listen(3000, () => console.log('PixFlow Server running on port 3000'));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`PixFlow Server running on port ${PORT}`));
