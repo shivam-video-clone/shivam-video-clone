@@ -1,102 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PixFlow - Image to Animation Pipeline</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Image Animator</title>
 </head>
+
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header>
-            <h1>PixFlow</h1>
-            <p>Image → Animation → Video Automation</p>
-        </header>
 
-        <!-- Main Workspace -->
-        <main class="workspace">
-            <!-- Left Panel: Inputs -->
-            <section class="input-panel">
-                <!-- 1. Upload Images -->
-                <div class="form-group">
-                    <label>1. Upload Images (Max 50, JPG/PNG/WEBP)</label>
-                    <div class="drop-zone" id="dropZone">
-                        <p>Drag & Drop images here or <span>Browse</span></p>
-                        <input type="file" id="fileInput" multiple accept="image/jpeg, image/png, image/webp" hidden>
-                    </div>
-                    <small id="imageCountInfo">0/50 images uploaded</small>
-                </div>
+    <h1>Image → Animation</h1>
 
-                <!-- 2. Paste Prompts -->
-                <div class="form-group">
-                    <label>2. Paste Prompts (One per line)</label>
-                    <textarea id="promptInput" placeholder="Image #1 prompt&#10;Image #2 prompt..."></textarea>
-                    <small id="promptCountInfo">0 prompts entered</small>
-                </div>
+    <input type="file" id="images" accept="image/*" multiple>
 
-                <!-- Controls Grid (Ratio, Duration, Quality) -->
-                <div class="controls-grid">
-                    <div class="form-group">
-                        <label for="ratioSelect">3. Ratio</label>
-                        <select id="ratioSelect">
-                            <option value="original">Original</option>
-                            <option value="16:9">16:9</option>
-                            <option value="9:16">9:16</option>
-                            <option value="1:1">1:1</option>
-                            <option value="4:5">4:5</option>
-                            <option value="4:3">4:3</option>
-                            <option value="21:9">21:9</option>
-                        </select>
-                    </div>
+    <br><br>
 
-                    <div class="form-group">
-                        <label for="durationSelect">4. Duration</label>
-                        <select id="durationSelect">
-                            <option value="5">5 seconds</option>
-                        </select>
-                    </div>
+    <textarea
+        id="prompts"
+        rows="10"
+        cols="40"
+        placeholder="हर लाइन में एक animation prompt लिखें..."
+    ></textarea>
 
-                    <div class="form-group">
-                        <label for="qualitySelect">5. Quality</label>
-                        <select id="qualitySelect">
-                            <option value="1080p">1080p</option>
-                        </select>
-                    </div>
-                </div>
+    <br><br>
 
-                <!-- Start Button -->
-                <button id="startBtn" class="primary-btn">6. Start Animation</button>
-            </section>
+    <select id="ratio">
+        <option value="original">Original</option>
+        <option value="16:9">16:9</option>
+        <option value="9:16">9:16</option>
+        <option value="1:1">1:1</option>
+        <option value="4:5">4:5</option>
+        <option value="4:3">4:3</option>
+        <option value="21:9">21:9</option>
+    </select>
 
-            <!-- Right Panel: Queue, Progress & Report -->
-            <section class="output-panel">
-                <!-- 7. Progress & Queue Preview -->
-                <div class="card">
-                    <h3>7. Progress & Queue Status</h3>
-                    <div class="progress-container">
-                        <div class="progress-bar" id="progressBar"></div>
-                    </div>
-                    <p id="progressText" class="progress-text">Status: Waiting to start...</p>
-                    
-                    <div class="queue-preview" id="queuePreview">
-                        <!-- Dynamic queue items will appear here -->
-                        <p class="placeholder-text">No images in queue yet.</p>
-                    </div>
-                </div>
+    <select id="duration">
+        <option value="5">5 Seconds</option>
+    </select>
 
-                <!-- 8. Final Report -->
-                <div class="card">
-                    <h3>8. Final Report</h3>
-                    <div class="report-box" id="reportBox">
-                        <p class="placeholder-text">Report will appear after processing finishes.</p>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
+    <select id="quality">
+        <option value="1080p">1080p</option>
+    </select>
+
+    <br><br>
+
+    <button id="start">Start Animation</button>
+
+    <p id="status">Waiting...</p>
 
     <script src="app.js"></script>
+
 </body>
 </html>
-
