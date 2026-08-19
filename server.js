@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 // अपना API Token यहाँ पेस्ट करें
-const REPLICATE_API_TOKEN = 'export REPLICATE_API_TOKEN=<paste-your-token-here>'; 
+const REPLICATE_API_TOKEN = export REPLICATE_API_TOKEN=<paste-your-token-here>
 
 app.post('/api/animate', async (req, res) => {
     try {
