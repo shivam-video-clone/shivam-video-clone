@@ -1,417 +1,832 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Image Animator</title>
+<title>Image Animator</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+* {
+    box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0b0f19;
-      color: white;
-    }
+body {
+    margin: 0;
+    background: #080b12;
+    color: white;
+    font-family: Arial, sans-serif;
+}
 
-    .app {
-      width: 100%;
-      max-width: 900px;
-      margin: auto;
-      padding: 20px;
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 23px;
+}
+
+.subtitle {
+    color: #9ca3af;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.credits {
+    background: #172033;
+    border: 1px solid #334155;
+    padding: 10px 13px;
+    border-radius: 12px;
+    color: #4ade80;
+    font-weight: bold;
+}
+
+.card {
+    background: #131824;
+    border: 1px solid #293244;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 18px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.upload-box {
+    border: 2px dashed #3b82f6;
+    background: #0e1625;
+    border-radius: 16px;
+    padding: 35px 15px;
+    text-align: center;
+}
+
+#images {
+    display: none;
+}
+
+.select-button {
+    display: inline-block;
+    background: #2563eb;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.select-button:active {
+    transform: scale(.98);
+}
+
+.upload-text {
+    color: #9ca3af;
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+#imageCount {
+    color: #60a5fa;
+    margin-top: 8px;
+    font-weight: bold;
+}
+
+.preview {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.preview img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 9px;
+    border: 1px solid #374151;
+}
+
+textarea {
+    width: 100%;
+    min-height: 180px;
+    background: #0b1019;
+    color: white;
+    border: 1px solid #374151;
+    border-radius: 12px;
+    padding: 15px;
+    font-size: 14px;
+    outline: none;
+    resize: vertical;
+}
+
+textarea:focus {
+    border-color: #f97316;
+}
+
+#promptCount {
+    color: #fb923c;
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+.settings {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.setting {
+    color: #cbd5e1;
+    font-size: 13px;
+}
+
+select {
+    width: 100%;
+    margin-top: 7px;
+    padding: 12px;
+    background: #0b1019;
+    color: white;
+    border: 1px solid #374151;
+    border-radius: 10px;
+}
+
+.start-button {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.start-button:disabled {
+    opacity: .6;
+}
+
+.progress {
+    width: 100%;
+    height: 8px;
+    background: #252c3a;
+    border-radius: 20px;
+    margin-top: 15px;
+    overflow: hidden;
+}
+
+#progressBar {
+    width: 0%;
+    height: 100%;
+    background: #22c55e;
+}
+
+#status {
+    margin-top: 15px;
+    padding: 15px;
+    min-height: 55px;
+    background: #0b1019;
+    border: 1px solid #293244;
+    border-radius: 12px;
+    color: #4ade80;
+    line-height: 1.6;
+}
+
+#status a {
+    color: #60a5fa;
+    font-weight: bold;
+}
+
+@media (max-width: 650px) {
+
+    .container {
+        padding: 14px;
     }
 
     .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 22px;
+        align-items: flex-start;
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #7c3aed, #ec4899);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-weight: bold;
-      font-size: 20px;
-    }
-
-    .brand h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-
-    .brand p {
-      margin: 4px 0 0;
-      color: #9ca3af;
-      font-size: 13px;
+    h1 {
+        font-size: 20px;
     }
 
     .credits {
-      background: #172033;
-      border: 1px solid #334155;
-      padding: 10px 14px;
-      border-radius: 12px;
-      color: #4ade80;
-      font-weight: bold;
-    }
-
-    .card {
-      background: #151a26;
-      border: 1px solid #293244;
-      border-radius: 18px;
-      padding: 20px;
-      margin-bottom: 18px;
-    }
-
-    .title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .title h2 {
-      margin: 0;
-      font-size: 18px;
-    }
-
-    .upload {
-      border: 2px dashed #3b82f6;
-      background: #101827;
-      border-radius: 16px;
-      padding: 35px 15px;
-      text-align: center;
-    }
-
-    .upload input {
-      display: none;
-    }
-
-    .select-btn {
-      display: inline-block;
-      padding: 13px 22px;
-      border-radius: 11px;
-      background: #2563eb;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .upload-info {
-      margin-top: 12px;
-      color: #9ca3af;
-      font-size: 13px;
-    }
-
-    #imageCount {
-      margin-top: 8px;
-      color: #60a5fa;
-      font-weight: bold;
-    }
-
-    .preview {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 8px;
-      margin-top: 16px;
-    }
-
-    .preview img {
-      width: 100%;
-      aspect-ratio: 1;
-      object-fit: cover;
-      border-radius: 9px;
-      border: 1px solid #374151;
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 180px;
-      background: #0d121c;
-      color: white;
-      border: 1px solid #374151;
-      border-radius: 13px;
-      padding: 15px;
-      font-size: 14px;
-      resize: vertical;
-      outline: none;
-    }
-
-    textarea:focus {
-      border-color: #f97316;
-    }
-
-    #promptCount {
-      margin-top: 8px;
-      color: #fb923c;
-      font-size: 13px;
+        font-size: 11px;
     }
 
     .settings {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
-
-    label.setting {
-      display: block;
-      color: #cbd5e1;
-      font-size: 13px;
-    }
-
-    select {
-      width: 100%;
-      margin-top: 7px;
-      padding: 12px;
-      border-radius: 10px;
-      background: #0d121c;
-      color: white;
-      border: 1px solid #374151;
-      outline: none;
-    }
-
-    .start {
-      width: 100%;
-      padding: 16px;
-      border: 0;
-      border-radius: 13px;
-      background: linear-gradient(135deg, #dc2626, #ef4444);
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .start:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .progress {
-      width: 100%;
-      height: 8px;
-      background: #252c3a;
-      border-radius: 20px;
-      margin-top: 15px;
-      overflow: hidden;
-    }
-
-    #progressBar {
-      width: 0%;
-      height: 100%;
-      background: #22c55e;
-      transition: width 0.3s;
-    }
-
-    #status {
-      margin-top: 15px;
-      padding: 15px;
-      min-height: 55px;
-      background: #0d121c;
-      border: 1px solid #293244;
-      border-radius: 12px;
-      color: #4ade80;
-      line-height: 1.7;
-    }
-
-    #status a {
-      color: #60a5fa;
-      font-weight: bold;
-    }
-
-    @media (max-width: 650px) {
-      .app {
-        padding: 14px;
-      }
-
-      .brand h1 {
-        font-size: 20px;
-      }
-
-      .credits {
-        font-size: 12px;
-      }
-
-      .settings {
         grid-template-columns: 1fr;
-      }
-
-      .preview {
-        grid-template-columns: repeat(3, 1fr);
-      }
     }
-  </style>
+
+    .preview {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+</style>
 </head>
 
 <body>
 
-  <div class="app">
+<div class="container">
 
     <div class="header">
-      <div class="brand">
-        <div class="logo">AI</div>
 
-        <div>
-          <h1>Image Animator</h1>
-          <p>Image → Animation</p>
-        </div>
-      </div>
+        <div class="brand">
 
-      <div class="credits">
-        ♾️ Unlimited
-      </div>
-    </div>
+            <div class="logo">
+                AI
+            </div>
 
+            <div>
+                <h1>Image Animator</h1>
+                <div class="subtitle">
+                    Turn your images into animated videos
+                </div>
+            </div>
 
-    <div class="card">
-
-      <div class="title">
-        <span>📷</span>
-        <h2>Upload Images</h2>
-      </div>
-
-      <div class="upload">
-
-        <label for="images" class="select-btn">
-          📁 Select Images
-        </label>
-
-        <input
-          type="file"
-          id="images"
-          accept="image/jpeg,image/png,image/webp"
-          multiple
-        >
-
-        <div class="upload-info">
-          Maximum 50 images
         </div>
 
-        <div id="imageCount">
-          0 / 50 Images
+        <div class="credits">
+            10 Credits
         </div>
-
-      </div>
-
-      <div id="preview" class="preview"></div>
 
     </div>
 
 
+    <!-- IMAGE UPLOAD -->
+
     <div class="card">
 
-      <div class="title">
-        <span>📝</span>
-        <h2>Paste Animation Prompts</h2>
-      </div>
+        <div class="card-title">
+            📷 Upload Images
+        </div>
 
-      <textarea
-        id="prompts"
-        placeholder="Paste one animation prompt per line...
+        <div class="upload-box">
+
+            <label
+                for="images"
+                class="select-button">
+                📁 Select Images
+            </label>
+
+            <input
+                id="images"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+            >
+
+            <div class="upload-text">
+                Upload up to 50 images
+            </div>
+
+            <div id="imageCount">
+                0 / 50 Images
+            </div>
+
+        </div>
+
+        <div
+            id="preview"
+            class="preview">
+        </div>
+
+    </div>
+
+
+    <!-- PROMPTS -->
+
+    <div class="card">
+
+        <div class="card-title">
+            📝 Animation Prompts
+        </div>
+
+        <textarea
+            id="prompts"
+            placeholder="Paste one animation prompt per line...
 
 Example:
+
 Camera slowly moves forward.
 Character slowly turns toward camera.
-Fog moves through the background."
-      ></textarea>
+Hair moves gently in the wind.
+Clouds move slowly in the background."
+        ></textarea>
 
-      <div id="promptCount">
-        0 / 50 Prompts
-      </div>
+        <div id="promptCount">
+            0 / 50 Prompts
+        </div>
 
     </div>
 
+
+    <!-- SETTINGS -->
 
     <div class="card">
 
-      <div class="title">
-        <span>⚙️</span>
-        <h2>Animation Settings</h2>
-      </div>
+        <div class="card-title">
+            ⚙️ Animation Settings
+        </div>
 
-      <div class="settings">
+        <div class="settings">
 
-        <label class="setting">
-          Aspect Ratio
+            <div class="setting">
 
-          <select id="ratio">
-            <option value="original">Original</option>
-            <option value="16:9">16:9</option>
-            <option value="9:16">9:16</option>
-            <option value="1:1">1:1</option>
-            <option value="4:5">4:5</option>
-            <option value="4:3">4:3</option>
-            <option value="21:9">21:9</option>
-          </select>
-        </label>
+                Aspect Ratio
+
+                <select id="ratio">
+
+                    <option value="original">
+                        Original
+                    </option>
+
+                    <option value="16:9">
+                        16:9
+                    </option>
+
+                    <option value="9:16">
+                        9:16
+                    </option>
+
+                    <option value="1:1">
+                        1:1
+                    </option>
+
+                </select>
+
+            </div>
 
 
-        <label class="setting">
-          Duration
+            <div class="setting">
 
-          <select id="duration">
-            <option value="5">5 Seconds</option>
-            <option value="10">10 Seconds</option>
-          </select>
-        </label>
+                Duration
+
+                <select id="duration">
+
+                    <option value="5">
+                        5 Seconds
+                    </option>
+
+                    <option value="10">
+                        10 Seconds
+                    </option>
+
+                </select>
+
+            </div>
 
 
-        <label class="setting">
-          Quality
+            <div class="setting">
 
-          <select id="quality">
-            <option value="1080p">1080p</option>
-          </select>
-        </label>
+                Quality
 
-      </div>
+                <select id="quality">
+
+                    <option value="1080p">
+                        1080p
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
 
     </div>
 
+
+    <!-- START -->
 
     <div class="card">
 
-      <div class="title">
-        <span>🎬</span>
-        <h2>Start Animation</h2>
-      </div>
+        <div class="card-title">
+            🎬 Start Animation
+        </div>
 
-      <button
-        id="start"
-        class="start"
-        type="button"
-      >
-        ▶ Start Animation
-      </button>
+        <button
+            id="start"
+            class="start-button">
 
-      <div class="progress">
-        <div id="progressBar"></div>
-      </div>
+            ▶ Start Animation
 
-      <div id="status">
-        Waiting for images and prompts...
-      </div>
+        </button>
+
+        <div class="progress">
+
+            <div id="progressBar"></div>
+
+        </div>
+
+        <div id="status">
+
+            Waiting for images and prompts...
+
+        </div>
 
     </div>
 
-  </div>
+</div>
 
-  <script src="app.js"></script>
+
+<script>
+
+const imageInput =
+    document.getElementById("images");
+
+const imageCount =
+    document.getElementById("imageCount");
+
+const preview =
+    document.getElementById("preview");
+
+const promptInput =
+    document.getElementById("prompts");
+
+const promptCount =
+    document.getElementById("promptCount");
+
+const startButton =
+    document.getElementById("start");
+
+const statusBox =
+    document.getElementById("status");
+
+const progressBar =
+    document.getElementById("progressBar");
+
+
+/* IMAGE UPLOAD */
+
+imageInput.addEventListener(
+    "change",
+    function () {
+
+        const files =
+            Array.from(this.files);
+
+        if (files.length > 50) {
+
+            alert(
+                "Maximum 50 images allowed."
+            );
+
+            this.value = "";
+
+            imageCount.textContent =
+                "0 / 50 Images";
+
+            preview.innerHTML = "";
+
+            return;
+        }
+
+        imageCount.textContent =
+            files.length +
+            " / 50 Images";
+
+        preview.innerHTML = "";
+
+        files.forEach(
+            function (file) {
+
+                const img =
+                    document.createElement("img");
+
+                img.src =
+                    URL.createObjectURL(file);
+
+                preview.appendChild(img);
+
+            }
+        );
+
+        statusBox.textContent =
+            files.length +
+            " image(s) selected.";
+
+    }
+);
+
+
+/* PROMPT COUNT */
+
+promptInput.addEventListener(
+    "input",
+    function () {
+
+        const prompts =
+            this.value
+            .split(/\r?\n/)
+            .map(p => p.trim())
+            .filter(Boolean);
+
+        promptCount.textContent =
+            prompts.length +
+            " / 50 Prompts";
+
+    }
+);
+
+
+/* START ANIMATION */
+
+startButton.addEventListener(
+    "click",
+    async function () {
+
+        const files =
+            Array.from(
+                imageInput.files
+            );
+
+        const prompts =
+            promptInput.value
+            .split(/\r?\n/)
+            .map(p => p.trim())
+            .filter(Boolean);
+
+
+        if (files.length === 0) {
+
+            statusBox.textContent =
+                "❌ Please select an image first.";
+
+            return;
+
+        }
+
+
+        if (prompts.length === 0) {
+
+            statusBox.textContent =
+                "❌ Please enter an animation prompt.";
+
+            return;
+
+        }
+
+
+        if (files.length !== prompts.length) {
+
+            statusBox.textContent =
+                "❌ Images and prompts must be the same number.";
+
+            return;
+
+        }
+
+
+        startButton.disabled = true;
+
+        startButton.textContent =
+            "⏳ Starting...";
+
+
+        for (
+            let i = 0;
+            i < files.length;
+            i++
+        ) {
+
+            try {
+
+                statusBox.textContent =
+                    "📤 Uploading image " +
+                    (i + 1) +
+                    " of " +
+                    files.length +
+                    "...";
+
+
+                const formData =
+                    new FormData();
+
+                formData.append(
+                    "image",
+                    files[i]
+                );
+
+                formData.append(
+                    "prompt",
+                    prompts[i]
+                );
+
+
+                const response =
+                    await fetch(
+                        "/api/animate",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error ||
+                        "Animation request failed."
+                    );
+
+                }
+
+
+                statusBox.innerHTML =
+                    "🎬 Animation " +
+                    (i + 1) +
+                    " started.<br>" +
+                    "ID: " +
+                    data.id;
+
+
+                await checkStatus(
+                    data.id,
+                    i + 1,
+                    files.length
+                );
+
+
+                progressBar.style.width =
+                    (
+                        ((i + 1) /
+                        files.length) *
+                        100
+                    ) + "%";
+
+
+            } catch (error) {
+
+                statusBox.innerHTML =
+                    "❌ Error on image " +
+                    (i + 1) +
+                    ":<br>" +
+                    error.message;
+
+                break;
+
+            }
+
+        }
+
+
+        startButton.disabled = false;
+
+        startButton.textContent =
+            "▶ Start Animation";
+
+    }
+);
+
+
+/* CHECK STATUS */
+
+async function checkStatus(
+    id,
+    number,
+    total
+) {
+
+    return new Promise(
+        function (resolve, reject) {
+
+            async function check() {
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/status/" +
+                            id
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        reject(
+                            new Error(
+                                data.error ||
+                                "Status check failed."
+                            )
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (
+                        data.status ===
+                        "succeeded"
+                    ) {
+
+                        statusBox.innerHTML =
+                            "✅ Animation " +
+                            number +
+                            " of " +
+                            total +
+                            " completed.<br><br>" +
+
+                            "<a href=\"" +
+                            data.output +
+                            "\" target=\"_blank\" download>" +
+                            "🎥 Open / Download Video" +
+                            "</a>";
+
+                        resolve();
+
+                        return;
+
+                    }
+
+
+                    if (
+                        data.status ===
+                        "failed" ||
+                        data.status ===
+                        "canceled"
+                    ) {
+
+                        reject(
+                            new Error(
+                                data.error ||
+                                "Animation failed."
+                            )
+                        );
+
+                        return;
+
+                    }
+
+
+                    statusBox.innerHTML =
+                        "⏳ Processing animation " +
+                        number +
+                        " of " +
+                        total +
+                        "...";
+
+
+                    setTimeout(
+                        check,
+                        5000
+                    );
+
+                } catch (error) {
+
+                    reject(error);
+
+                }
+
+            }
+
+            check();
+
+        }
+    );
+
+}
+
+</script>
 
 </body>
 </html>
