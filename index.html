@@ -1,118 +1,420 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Image Animator</title>
+  <title>Image Animator</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #0f1117;
-            color: #ffffff;
-        }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0b0f19;
+      color: white;
+    }
 
-        .app {
-            max-width: 1000px;
-            margin: auto;
-            padding: 24px;
-        }
+    .app {
+      width: 100%;
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
 
-        /* HEADER */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+    }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-        .logo {
-            width: 46px;
-            height: 46px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, #7c3aed, #ec4899);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            font-weight: bold;
-        }
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #7c3aed, #ec4899);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 20px;
+    }
 
-        .brand h1 {
-            margin: 0;
-            font-size: 24px;
-        }
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+    }
 
-        .brand p {
-            margin: 4px 0 0;
-            color: #8f96a8;
-            font-size: 13px;
-        }
+    .brand p {
+      margin: 4px 0 0;
+      color: #9ca3af;
+      font-size: 13px;
+    }
 
-        .credits {
-            background: #181c26;
-            border: 1px solid #2a3040;
-            padding: 10px 15px;
-            border-radius: 12px;
-            color: #65e6a5;
-            font-weight: bold;
-        }
+    .credits {
+      background: #172033;
+      border: 1px solid #334155;
+      padding: 10px 14px;
+      border-radius: 12px;
+      color: #4ade80;
+      font-weight: bold;
+    }
 
-        /* CARD */
-        .card {
-            background: #171a23;
-            border: 1px solid #282e3d;
-            border-radius: 18px;
-            padding: 22px;
-            margin-bottom: 18px;
-        }
+    .card {
+      background: #151a26;
+      border: 1px solid #293244;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
 
-        .card-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
 
-        .card-title h2 {
-            margin: 0;
-            font-size: 18px;
-        }
+    .title h2 {
+      margin: 0;
+      font-size: 18px;
+    }
 
-        /* UPLOAD */
-        .upload-box {
-            display: block;
-            border: 2px dashed #3a4255;
-            border-radius: 16px;
-            padding: 35px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+    .upload {
+      border: 2px dashed #3b82f6;
+      background: #101827;
+      border-radius: 16px;
+      padding: 35px 15px;
+      text-align: center;
+    }
 
-        .upload-box:hover {
-            border-color: #3b82f6;
-            background: #121b2b;
-        }
+    .upload input {
+      display: none;
+    }
 
-        .upload-box input {
-            display: none;
-        }
+    .select-btn {
+      display: inline-block;
+      padding: 13px 22px;
+      border-radius: 11px;
+      background: #2563eb;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-        .select-button {
+    .upload-info {
+      margin-top: 12px;
+      color: #9ca3af;
+      font-size: 13px;
+    }
+
+    #imageCount {
+      margin-top: 8px;
+      color: #60a5fa;
+      font-weight: bold;
+    }
+
+    .preview {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .preview img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 9px;
+      border: 1px solid #374151;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      background: #0d121c;
+      color: white;
+      border: 1px solid #374151;
+      border-radius: 13px;
+      padding: 15px;
+      font-size: 14px;
+      resize: vertical;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: #f97316;
+    }
+
+    #promptCount {
+      margin-top: 8px;
+      color: #fb923c;
+      font-size: 13px;
+    }
+
+    .settings {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    label.setting {
+      display: block;
+      color: #cbd5e1;
+      font-size: 13px;
+    }
+
+    select {
+      width: 100%;
+      margin-top: 7px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #0d121c;
+      color: white;
+      border: 1px solid #374151;
+      outline: none;
+    }
+
+    .start {
+      width: 100%;
+      padding: 16px;
+      border: 0;
+      border-radius: 13px;
+      background: linear-gradient(135deg, #dc2626, #ef4444);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .start:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .progress {
+      width: 100%;
+      height: 8px;
+      background: #252c3a;
+      border-radius: 20px;
+      margin-top: 15px;
+      overflow: hidden;
+    }
+
+    #progressBar {
+      width: 0%;
+      height: 100%;
+      background: #22c55e;
+      transition: width 0.3s;
+    }
+
+    #status {
+      margin-top: 15px;
+      padding: 15px;
+      min-height: 55px;
+      background: #0d121c;
+      border: 1px solid #293244;
+      border-radius: 12px;
+      color: #4ade80;
+      line-height: 1.7;
+    }
+
+    #status a {
+      color: #60a5fa;
+      font-weight: bold;
+    }
+
+    @media (max-width: 650px) {
+      .app {
+        padding: 14px;
+      }
+
+      .brand h1 {
+        font-size: 20px;
+      }
+
+      .credits {
+        font-size: 12px;
+      }
+
+      .settings {
+        grid-template-columns: 1fr;
+      }
+
+      .preview {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <div class="header">
+      <div class="brand">
+        <div class="logo">AI</div>
+
+        <div>
+          <h1>Image Animator</h1>
+          <p>Image → Animation</p>
+        </div>
+      </div>
+
+      <div class="credits">
+        ♾️ Unlimited
+      </div>
+    </div>
+
+
+    <div class="card">
+
+      <div class="title">
+        <span>📷</span>
+        <h2>Upload Images</h2>
+      </div>
+
+      <div class="upload">
+
+        <label for="images" class="select-btn">
+          📁 Select Images
+        </label>
+
+        <input
+          type="file"
+          id="images"
+          accept="image/jpeg,image/png,image/webp"
+          multiple
+        >
+
+        <div class="upload-info">
+          Maximum 50 images
+        </div>
+
+        <div id="imageCount">
+          0 / 50 Images
+        </div>
+
+      </div>
+
+      <div id="preview" class="preview"></div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="title">
+        <span>📝</span>
+        <h2>Paste Animation Prompts</h2>
+      </div>
+
+      <textarea
+        id="prompts"
+        placeholder="Paste one animation prompt per line...
+
+Example:
+Camera slowly moves forward.
+Character slowly turns toward camera.
+Fog moves through the background."
+      ></textarea>
+
+      <div id="promptCount">
+        0 / 50 Prompts
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="title">
+        <span>⚙️</span>
+        <h2>Animation Settings</h2>
+      </div>
+
+      <div class="settings">
+
+        <label class="setting">
+          Aspect Ratio
+
+          <select id="ratio">
+            <option value="original">Original</option>
+            <option value="16:9">16:9</option>
+            <option value="9:16">9:16</option>
+            <option value="1:1">1:1</option>
+            <option value="4:5">4:5</option>
+            <option value="4:3">4:3</option>
+            <option value="21:9">21:9</option>
+          </select>
+        </label>
+
+
+        <label class="setting">
+          Duration
+
+          <select id="duration">
+            <option value="5">5 Seconds</option>
+            <option value="10">10 Seconds</option>
+          </select>
+        </label>
+
+
+        <label class="setting">
+          Quality
+
+          <select id="quality">
+            <option value="1080p">1080p</option>
+          </select>
+        </label>
+
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="title">
+        <span>🎬</span>
+        <h2>Start Animation</h2>
+      </div>
+
+      <button
+        id="start"
+        class="start"
+        type="button"
+      >
+        ▶ Start Animation
+      </button>
+
+      <div class="progress">
+        <div id="progressBar"></div>
+      </div>
+
+      <div id="status">
+        Waiting for images and prompts...
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+
+</body>
+</html>        .select-button {
             display: inline-block;
             background: #2563eb;
             color: white;
