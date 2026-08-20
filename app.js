@@ -1,118 +1,180 @@
-const imageInput = document.getElementById('images');
-const promptInput = document.getElementById('prompts');
-const startButton = document.getElementById('start');
-const statusText = document.getElementById('status');
-
-// Image count बदलने पर
-imageInput.addEventListener('change', updatePreview);
-
-// Prompt लिखने पर
-promptInput.addEventListener('input', updatePreview);
+const imageInput = document.getElementById("images");
+const promptInput = document.getElementById("prompts");
+const startButton = document.getElementById("start");
+const statusBox = document.getElementById("status");
+const imageCount = document.getElementById("imageCount");
+const promptCount = document.getElementById("promptCount");
+const preview = document.getElementById("preview");
 
 function getPrompts() {
     return promptInput.value
         .split(/\r?\n/)
-        .map(prompt => prompt.trim())
-        .filter(prompt => prompt.length > 0);
+        .map(p => p.trim())
+        .filter(Boolean);
 }
 
-function updatePreview() {
-    const images = Array.from(imageInput.files);
+imageInput.addEventListener("change", () => {
+
+    const files = Array.from(imageInput.files);
+
+    imageCount.textContent =
+        `${files.length} / 50 Images`;
+
+    preview.innerHTML = "";
+
+    files.slice(0, 50).forEach(file => {
+
+        const img = document.createElement("img");
+
+        img.src = URL.createObjectURL(file);
+
+        preview.appendChild(img);
+    });
+});
+
+
+promptInput.addEventListener("input", () => {
+
     const prompts = getPrompts();
 
-    statusText.innerHTML = `
-        <b>Images:</b> ${images.length}/50<br>
-        <b>Prompts:</b> ${prompts.length}/50
-        <hr>
-    `;
+    promptCount.textContent =
+        `${prompts.length} / 50 Prompts`;
+});
 
-    if (images.length === 0 && prompts.length === 0) {
-        statusText.innerHTML = 'Waiting for images and prompts...';
+
+startButton.addEventListener("click", async () => {
+
+    const files = Array.from(imageInput.files);
+    const prompts = getPrompts();
+
+    if (files.length !== 1) {
+        statusBox.innerHTML =
+            "❌ अभी test के लिए सिर्फ 1 image upload करें।";
         return;
     }
 
-    // 50 से ज्यादा images
-    if (images.length > 50) {
-        statusText.innerHTML +=
-            '<span style="color:red;">❌ Maximum 50 images allowed.</span>';
+    if (prompts.length !== 1) {
+        statusBox.innerHTML =
+            "❌ अभी test के लिए सिर्फ 1 prompt डालें।";
         return;
     }
 
-    // 50 से ज्यादा prompts
-    if (prompts.length > 50) {
-        statusText.innerHTML +=
-            '<span style="color:red;">❌ Maximum 50 prompts allowed.</span>';
-        return;
-    }
+    startButton.disabled = true;
+    startButton.textContent = "⏳ Starting...";
 
-    // Matching preview
-    const total = Math.max(images.length, prompts.length);
+    statusBox.innerHTML =
+        "📤 Image server पर भेजी जा रही है...";
 
-    for (let i = 0; i < total; i++) {
-        const imageExists = i < images.length;
-        const promptExists = i < prompts.length;
+    try {
 
-        if (imageExists && promptExists) {
-            statusText.innerHTML +=
-                `✅ Image #${i + 1} → Prompt #${i + 1}<br>`;
-        } 
-        else if (imageExists && !promptExists) {
-            statusText.innerHTML +=
-                `⚠️ Image #${i + 1} → Prompt missing<br>`;
-        } 
-        else if (!imageExists && promptExists) {
-            statusText.innerHTML +=
-                `⚠️ Prompt #${i + 1} → Image missing<br>`;
+        const formData = new FormData();
+
+        formData.append("image", files[0]);
+        formData.append("prompt", prompts[0]);
+
+        const response = await fetch(
+            "/api/animate",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.error || "Animation request failed."
+            );
         }
+
+        statusBox.innerHTML =
+            `🎬 Animation started.<br>
+             Prediction ID: ${data.id}<br>
+             Status: ${data.status}`;
+
+        checkStatus(data.id);
+
+    } catch (error) {
+
+        statusBox.innerHTML =
+            `❌ Error: ${error.message}`;
+
+        startButton.disabled = false;
+        startButton.textContent =
+            "▶ Start Animation";
     }
-}
+});
 
-// Start Animation
-startButton.addEventListener('click', () => {
 
-    const images = Array.from(imageInput.files);
-    const prompts = getPrompts();
+async function checkStatus(id) {
 
-    // Images check
-    if (images.length === 0) {
-        statusText.innerHTML =
-            '❌ Please upload at least 1 image.';
-        return;
+    try {
+
+        const response = await fetch(
+            `/api/status/${id}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.error || "Status check failed."
+            );
+        }
+
+
+        if (data.status === "succeeded") {
+
+            statusBox.innerHTML =
+                `✅ Animation completed!<br><br>
+                 <a href="${data.output}"
+                 target="_blank"
+                 download>
+                 🎥 Open / Download Video
+                 </a>`;
+
+            startButton.disabled = false;
+            startButton.textContent =
+                "▶ Start Animation";
+
+            return;
+        }
+
+
+        if (data.status === "failed" ||
+            data.status === "canceled") {
+
+            statusBox.innerHTML =
+                `❌ Animation ${data.status}.<br>
+                 ${data.error || ""}`;
+
+            startButton.disabled = false;
+            startButton.textContent =
+                "▶ Start Animation";
+
+            return;
+        }
+
+
+        statusBox.innerHTML =
+            `⏳ Animation processing...<br>
+             Status: ${data.status}`;
+
+        setTimeout(() => {
+            checkStatus(id);
+        }, 5000);
+
+    } catch (error) {
+
+        statusBox.innerHTML =
+            `❌ Status Error: ${error.message}`;
+
+        startButton.disabled = false;
+        startButton.textContent =
+            "▶ Start Animation";
     }
-
-    // Maximum images
-    if (images.length > 50) {
-        statusText.innerHTML =
-            '❌ Maximum 50 images allowed.';
-        return;
-    }
-
-    // Prompt check
-    if (prompts.length === 0) {
-        statusText.innerHTML =
-            '❌ Please paste animation prompts.';
-        return;
-    }
-
-    // Maximum prompts
-    if (prompts.length > 50) {
-        statusText.innerHTML =
-            '❌ Maximum 50 prompts allowed.';
-        return;
-    }
-
-    // Image/Prompt count matching
-    if (images.length !== prompts.length) {
-        statusText.innerHTML = `
-            ❌ Images और Prompts की संख्या बराबर होनी चाहिए।<br><br>
-            Images: ${images.length}<br>
-            Prompts: ${prompts.length}
-        `;
-        return;
-    }
-
-    // Final sequence
-    statusText.innerHTML = `
+            }    statusText.innerHTML = `
         <b>✅ Ready for AutoFlow</b><br><br>
     `;
 
